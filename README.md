@@ -5,7 +5,7 @@ With the interface you must be able to change the color of the strip or individu
 
 ## Technologies:
 * Hardware: Raspberry Pi B+, LEDstrip(WS2812b), Powersupply(5V/1A)
-* Front-End: HTML5, CSS3, JavaScript
+* Front-End: HTML5, CSS3, JavaScript, Jinja 2
 * Back-End: Python(Flask), Socket.io, rpi_ws281x
 
 ## Tasks list:
@@ -15,8 +15,8 @@ With the interface you must be able to change the color of the strip or individu
 - [x] Install OS on the Raspberry Pi(Raspbian)
 - [x] Install the needed services/features to the RPi(python, scons, swig, git)
 - [x] Find libraries to experiment with LEDstrip(rpi_ws281x)
-- [x] Make the led work and try some selfmade python scripts
-- [ ] Prepare a python webserver
+- [x] Make the LED work and try some selfmade python scripts
+- [ ] Prepare a Python webserver
 - [ ] Create the HTML-pages
 - [ ] Create the CSS-style
 - [ ] Create the JavaScript
