@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}About{% endblock %}
+{% block head %}{{ super() }}{% endblock %}
+{% block content %}
+    <h1>{{ self.title() }}</h1>
+    <p>
+        Web interface controlling WS2812b LED strips
+    </p>
+    <p>
+        <a href="https://github.com/XeoXeo/WS2812b_Ledstrip_Web_Interface">
+            https://github.com/XeoXeo/WS2812b_Ledstrip_Web_Interface
+        </a>
+    </p>
+{% endblock %}

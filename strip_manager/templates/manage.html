@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Manage{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/socket.io-1.4.5.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function sendMesssage() {
+                socket.emit("command", msg.value);
+                msg.value = "";
+            }
+            
+            var socket = io(),
+                sendButton = document.getElementsByTagName("section")[0].getElementsByTagName("button")[0],
+                msg = document.getElementById("m");
+            
+            sendButton.addEventListener("click", function() { sendMesssage(); });
+            
+            msg.addEventListener("keydown", function(e) {
+                if (e.keyCode == 13) sendMesssage();
+            });
+
+            socket.on("command", function(data) {
+                var messages = document.getElementById("messages"),
+                    li = document.createElement("li");
+                
+                li.appendChild(document.createTextNode(data));
+                messages.appendChild(li);
+            });
+        }, false);
+    </script>
+{% endblock %}
+{% block content %}
+    <h1>{{ self.title() }}</h1>
+    <article>
+        <ul id="messages"></ul>
+        <section>
+            <input id="m" autocomplete="off"/><button>Send</button>
+        </section>
+    </article>
+{% endblock %}
