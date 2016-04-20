@@ -3,6 +3,11 @@
 The project consists of making a web interface to configure a specific type of LEDstrip(WS2812b).
 With the interface you must be able to change the color of the strip or individual LED.
 
+## Technologies:
+* Hardware: Raspberry Pi B+, LEDstrip(WS2812b), Powersupply(5V/1A)
+* Front-End: HTML5, CSS3, JavaScript
+* Back-End: Python(Flask), Socket.io, rpi_ws281x
+
 ## Tasks list:
 
 ### Technical part
