@@ -16,3 +16,15 @@ window.addEventListener('DOMContentLoaded',
 function getLEDCount() {
     return count;
 }
+
+function createGrid(count) {
+    // Create as much as elements as the count of LEDs   
+}
+
+function getLEDInformation(count) {
+    // Retreive the information of each LED and displays it in the related elements
+}
+
+function setLEDInformation(data) {
+    // Display LED data in the corresponding HTML element
+}
