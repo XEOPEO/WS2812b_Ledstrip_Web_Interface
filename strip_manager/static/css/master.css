@@ -1,0 +1,23 @@
+/* Master style */
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic");
+*, *:before, *:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+}
+html body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-size: 62.5%;
+    font-family: 'Open Sans', sans-serif;
+}
