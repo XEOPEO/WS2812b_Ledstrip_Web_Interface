@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 window.addEventListener('DOMContentLoaded',
     function ()
     {
