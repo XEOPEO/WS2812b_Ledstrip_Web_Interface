@@ -17,7 +17,7 @@ With the interface you must be able to change the color of the strip or individu
 - [x] Find libraries to experiment with LEDstrip(rpi_ws281x)
 - [x] Make the LED work and try some selfmade python scripts
 - [x] Prepare a Python webserver
-- [ ] Get to know Python Flask Framework
+- [ ] Get to know Python Flask Framework(In progress...)
 - [ ] Create the HTML-pages
 - [ ] Create the CSS-style
 - [ ] Create the JavaScript
