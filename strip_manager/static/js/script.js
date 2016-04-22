@@ -33,9 +33,9 @@ function createGrid(count) {
 
 function getLEDInformation(index) {
     // Get LED data for the corresponding HTML element
-    return data
+    return data;
 }
-=======
+
 window.addEventListener('DOMContentLoaded',
     function ()
     {
@@ -72,4 +72,3 @@ function getLEDInformation(index) {
     // Get LED data for the corresponding HTML element
     return data
 }
->>>>>>> 86b55b1bf4bee2cccc63d79dea4a89c7c862e6c0
