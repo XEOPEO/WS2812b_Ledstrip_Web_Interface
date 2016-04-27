@@ -5,7 +5,7 @@ With the interface you must be able to change the color of the strip or individu
 
 ## Technologies:
 * Hardware: Raspberry Pi B+, LEDstrip(WS2812b), Powersupply(5V/1A)
-* Front-End: HTML5, CSS3, JavaScript, Jinja 2
+* Front-End: HTML5, CSS3, JavaScript, jQuery, Bootstrap, Jinja 2
 * Back-End: Python(Flask), Socket.io, rpi_ws281x
 
 ## Tasks list:
