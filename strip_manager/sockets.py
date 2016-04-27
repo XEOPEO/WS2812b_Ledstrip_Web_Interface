@@ -13,5 +13,5 @@ def on_disconnect():
     emit('command', 'Strip REMOVED!', broadcast=True)
     
 @socketio.on('command')
-def on_chat_message(data):
+def on_command(data):
     emit('command', str(data), broadcast=True)

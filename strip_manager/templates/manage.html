@@ -5,7 +5,7 @@
     <script src="{{ url_for('static', filename='js/socket.io-1.4.5.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            function sendMesssage() {
+            function sendCommand() {
                 socket.emit("command", msg.value);
                 msg.value = "";
             }
@@ -14,10 +14,10 @@
                 sendButton = document.getElementsByTagName("section")[0].getElementsByTagName("button")[0],
                 msg = document.getElementById("m");
             
-            sendButton.addEventListener("click", function() { sendMesssage(); });
+            sendButton.addEventListener("click", function() { sendCommand(); });
             
             msg.addEventListener("keydown", function(e) {
-                if (e.keyCode == 13) sendMesssage();
+                if (e.keyCode == 13) sendCommand();
             });
 
             socket.on("command", function(data) {
@@ -31,7 +31,7 @@
     </script>
 {% endblock %}
 {% block content %}
-    <h1>{{ self.title() }}</h1>
+    <h1 class="page-header">{{ self.title() }}</h1>
     <article>
         <ul id="messages"></ul>
         <section>
