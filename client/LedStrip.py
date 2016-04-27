@@ -1,34 +1,30 @@
 from socketIO_client import SocketIO, BaseNamespace
 from neopixel import Adafruit_NeoPixel, Color
-from enum import Enum, unique
 import time
+import json
 
 class LedStrip:
     def numLEDs(self):
         return self._obj.numPixels()
 
-    @unique
-    class Color(Enum):
-        BLACK = Color(0, 0, 0)
-        RED = Color(255, 0, 0)
-        GREEN = Color(0, 0, 255)
-        BLUE = Color(0, 255, 0)
-        CYAN = Color(0, 255, 255)
-        YELLOW = Color(255, 0, 255)
-        PINK = Color(255, 255, 0)
-        ORANGE = Color(255, 0, 127)
-
-    def __init__(self, obj):
+    def setNeoPixel(self, obj):
         self._obj = obj
+        self._obj.begin()
         self.turnOff()
+
+    def getNeoPixel(self):
+        return self._obj
+
+    def __init__(self, obj=None):
+        self._obj = obj
 
     def turnOff(self):
         for i in range(self.numLEDs()):
-            self._obj.setPixelColor(i, Color.BLACK)
+            self._obj.setPixelColor(i, Color(0, 0, 0))
             self._obj.show()
             time.sleep(.1)
 
-    def colorWipe(self, color, wait_sec=.05):
+    def colorWipe(self, color=Color(255, 0, 0), wait_sec=.05):
         ''' Wipe color across strip a pixel at a time '''
 
         for i in range(self.numLEDs()):
@@ -36,7 +32,7 @@ class LedStrip:
             self._obj.show()
             time.sleep(wait_sec)
 
-    def theaterChase(self, color, wait_sec=.05, it=10):
+    def theaterChase(self, color=Color(0, 255, 0), wait_sec=.05, it=10):
         ''' Movie theater light style chaser animation '''
 
         for j in range(it):
@@ -97,19 +93,34 @@ class LedStrip:
                 for i in range(0, self.numLEDs(), 3): self._obj.setPixelColor(i + q, 0)
     # ---
 
-class DefaultNamespace(BaseNamespace):
+class StripNamespace(BaseNamespace):
     def on_connect(self):
         print '[Connected]'
-        self.join('join', 'heyoo')
 
     def on_command(self, *args):
-        data = str(args[0]['message'])
-        # TODO: Parse JSON object from server
+        data = args[0]
+
+        if 'count' in data and 'brightness' in data:
+            data = json.loads(data)
+
+            if isinstance(data['count'], int) and isinstance(data['brightness'], int):
+                strip.setNeoPixel(Adafruit_NeoPixel(data['count'], 18, 800000, 5, 0, data['brightness']))
+
+        if strip.getNeoPixel is not None:
+            data = str(data)
+
+            if data == 'colorWipe': strip.colorWipe()
+            elif data == 'theaterChase': strip.theaterChase()
+            elif data == 'rainbow': strip.rainbow()
+            elif data == 'rainbowCycle': strip.rainbowCycle()
+            elif data == 'theaterChaseRainbow': strip.theaterChaseRainbow()
 
     def on_disconnect(self):
         print '[Disconnected]'
         socketIO.disconnect()
 
 if __name__ == '__main__':
-    socketIO = SocketIO('127.0.0.1', 5000, DefaultNamespace)
+    strip = LedStrip()
+    socketIO = SocketIO('http://flask-io-kibur.c9users.io', 8080)
+    strip_namespace = socketIO.define(StripNamespace, '/strip')
     socketIO.wait(for_connect=True, seconds=1)
