@@ -1,0 +1,28 @@
+<div class="modal fade" id="modalChange1LED" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    Change color LED at index
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="nmbrIndexLED">LED</label>
+                        <input id="nmbrIndexLED" class="form-control" type="number" min="0" max="0" value="0" step="1"/>
+                        <label for="pickerColorLED">Color</label>
+                        <input id="pickerColorLED" type="hidden" class="colorp"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSetLED">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="modal fade" id="modalDefRange" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    Change color for a defined range
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="nmbrIndexLEDFrom">From</label>
+                        <input id="nmbrIndexLEDFrom" class="form-control" type="number" min="0" max="0" value="0" step="1"/>
+                        <label for="nmbrRange">Range</label>
+                        <input id="nmbrRange" class="form-control" type="text"/>
+                        <label for="pickerColorRange">Color</label>
+                        <input id="pickerColorRange" type="text"/>
+                        <button id="btnAdd" class="btn btn-default" type="button">Add</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

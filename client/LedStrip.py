@@ -1,5 +1,6 @@
 from socketIO_client import SocketIO, BaseNamespace
 from neopixel import Adafruit_NeoPixel, Color
+from math import floor
 import time
 import json
 
@@ -15,10 +16,9 @@ class LedStrip:
     def getNeoPixel(self):
         return self._obj
 
-    def setColorPixel(self, index, color, wait_sec=.05):
+    def setColorPixel(self, index, color):
         self._obj.setPixelColor(index, color)
         self._obj.show()
-        time.sleep(wait_sec)
 
     def __init__(self, obj=None):
         self._obj = obj
@@ -27,7 +27,6 @@ class LedStrip:
         for i in range(self.numLEDs()):
             self._obj.setPixelColor(i, Color(0, 0, 0))
             self._obj.show()
-            time.sleep(.1)
 
     def colorWipe(self, color=Color(255, 0, 0), wait_sec=.05):
         ''' Wipe color across strip a pixel at a time '''
@@ -98,18 +97,56 @@ class LedStrip:
                 for i in range(0, self.numLEDs(), 3): self._obj.setPixelColor(i + q, 0)
     # ---
 
+    def createGradient(self, startColor, endColor, wait_sec=.05):
+        ''' Gradient styling '''
+
+        rStep = 0
+        gStep = 0
+        bStep = 0
+
+        if (endColor['r'] - startColor['r']) > 0:
+            rStep = int(floor((endColor['r'] - startColor['r']) / self.numLEDs()))
+        else:
+            rStep = int((endColor['r'] - startColor['r']) / self.numLEDs()) + 1
+
+        if (endColor['g'] - startColor['g']) > 0:
+            gStep = int(floor((endColor['g'] - startColor['g']) / self.numLEDs()))
+        else:
+            gStep = int((endColor['g'] - startColor['g']) / self.numLEDs()) + 1
+
+        if (endColor['b'] - startColor['b']) > 0:
+            bStep = int(floor((endColor['b'] - startColor['b']) / self.numLEDs()))
+        else:
+            bStep = int((endColor['b'] - startColor['b']) / self.numLEDs()) + 1
+
+        print "%i, %i, %i" % (rStep, gStep, bStep)
+
+        self._obj.setPixelColor(0, Color(startColor['g'], startColor['r'], startColor['b']))
+
+        for i in range(1, self.numLEDs() - 1):
+            self._obj.setPixelColor(i,\
+                Color(startColor['g'] + (gStep * i), startColor['r'] + (rStep * i), startColor['b'] + (bStep * i)))
+
+        self._obj.setPixelColor(self.numLEDs() - 1, Color(endColor['g'], endColor['r'], endColor['b']))
+        self._obj.show()
+        time.sleep(wait_sec)
+
+class DataParser:
+    @staticmethod
+    def colorObjectValidator(data):
+        if 'r' in data and 'g' in data and 'b' in data:
+            if isinstance(data['r'], int) and isinstance(data['g'], int) and isinstance(data['b'], int):
+                return True
+
+        return False
+
 class StripNamespace(BaseNamespace):
     def on_connect(self):
         print '[Connected]'
 
     def on_command(self, *args):
+        print args[0]
         data = args[0]
-
-        if 'index' in data and 'r' in data and 'g' in data and 'b' in data:
-            data = json.loads(data)
-
-            if isinstance(data['index'], int) and isinstance(data['r'], int) and isinstance(data['g'], int) and isinstance(data['b'], int):
-                strip.setColorPixel(data['index'], Color(data['g'], data['r'], data['b']))
 
         if 'count' in data and 'brightness' in data:
             data = json.loads(data)
@@ -117,7 +154,23 @@ class StripNamespace(BaseNamespace):
             if isinstance(data['count'], int) and isinstance(data['brightness'], int):
                 strip.setNeoPixel(Adafruit_NeoPixel(data['count'], 18, 800000, 5, 0, data['brightness']))
 
-        if strip.getNeoPixel is not None and 'index' not in data:
+        if strip.getNeoPixel is not None:
+            if 'index' in data and 'color' in data:
+                data = json.loads(data)
+
+                if isinstance(data['index'], int) and DataParser.colorObjectValidator(data['color']):
+                    r = data['color']['r']
+                    g = data['color']['g']
+                    b = data['color']['b']
+
+                    strip.setColorPixel(data['index'], Color(g, r, b))
+
+            if 'startColor' in data and 'endColor' in data:
+                data = json.loads(data)
+
+                if DataParser.colorObjectValidator(data['startColor']) and DataParser.colorObjectValidator(data['endColor']):
+                    strip.createGradient(data['startColor'], data['endColor'])
+
             data = str(data)
 
             if data == 'turnOff': strip.turnOff()
