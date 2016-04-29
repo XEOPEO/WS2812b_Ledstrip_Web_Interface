@@ -15,6 +15,11 @@ class LedStrip:
     def getNeoPixel(self):
         return self._obj
 
+    def setColorPixel(self, index, color, wait_sec=.05):
+        self._obj.setPixelColor(index, color)
+        self._obj.show()
+        time.sleep(wait_sec)
+
     def __init__(self, obj=None):
         self._obj = obj
 
@@ -39,7 +44,7 @@ class LedStrip:
             for q in range(3):
                 for i in range(0, self.numLEDs(), 3):
                     self._obj.setPixelColor(i + q, color)
-                
+
                 self._obj.show()
                 time.sleep(wait_sec)
 
@@ -100,16 +105,23 @@ class StripNamespace(BaseNamespace):
     def on_command(self, *args):
         data = args[0]
 
+        if 'index' in data and 'r' in data and 'g' in data and 'b' in data:
+            data = json.loads(data)
+
+            if isinstance(data['index'], int) and isinstance(data['r'], int) and isinstance(data['g'], int) and isinstance(data['b'], int):
+                strip.setColorPixel(data['index'], Color(data['g'], data['r'], data['b']))
+
         if 'count' in data and 'brightness' in data:
             data = json.loads(data)
 
             if isinstance(data['count'], int) and isinstance(data['brightness'], int):
                 strip.setNeoPixel(Adafruit_NeoPixel(data['count'], 18, 800000, 5, 0, data['brightness']))
 
-        if strip.getNeoPixel is not None:
+        if strip.getNeoPixel is not None and 'index' not in data:
             data = str(data)
 
-            if data == 'colorWipe': strip.colorWipe()
+            if data == 'turnOff': strip.turnOff()
+            elif data == 'colorWipe': strip.colorWipe()
             elif data == 'theaterChase': strip.theaterChase()
             elif data == 'rainbow': strip.rainbow()
             elif data == 'rainbowCycle': strip.rainbowCycle()
@@ -121,6 +133,6 @@ class StripNamespace(BaseNamespace):
 
 if __name__ == '__main__':
     strip = LedStrip()
-    socketIO = SocketIO('http://flask-io-kibur.c9users.io', 8080)
+    socketIO = SocketIO('127.0.0.1', 8080)
     strip_namespace = socketIO.define(StripNamespace, '/strip')
     socketIO.wait(for_connect=True, seconds=1)

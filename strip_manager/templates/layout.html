@@ -8,19 +8,21 @@
             <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
             <link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet">
             <link href="{{ url_for('static', filename='css/master.css') }}" rel="stylesheet">
-            <script src="{{ url_for('static', filename='js/jquery-2.2.3.min.js') }}"></script>
         {% endblock %}
     </head>
     <body>
         {% include "includes/_header.html" %}
-        <main>
+        <main class="container">
             {% block content %}{% endblock %}
         </main>
         <footer>
             <span>
-                &copy; Copyright 2016 by <a href="http://domain.invalid/">XeoXeo</a>.
+                &copy; Copyright 2016 by <a href="http://domain.invalid/">Kibur</a>.
             </span>
         </footer>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        {% block scripts %}
+            <script src="{{ url_for('static', filename='js/jquery-2.2.3.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        {% endblock %}
     </body>
 </html>

@@ -1,17 +1,15 @@
-from flask import session, request
 from . import socketio
-from flask_socketio import emit, send
+from flask_socketio import emit
 
-@socketio.on('connect')
+@socketio.on('connect', namespace='/strip')
 def on_connect():
     print 'Strip controller connected'
-    emit('command', 'NEW strip!', broadcast=True)
     
-@socketio.on('disconnect')
+@socketio.on('disconnect', namespace='/strip')
 def on_disconnect():
     print 'Strip controller disconnected'
-    emit('command', 'Strip REMOVED!', broadcast=True)
     
-@socketio.on('command')
+@socketio.on('command', namespace='/strip')
 def on_command(data):
+    print data
     emit('command', str(data), broadcast=True)

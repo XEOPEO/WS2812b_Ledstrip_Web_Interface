@@ -1,0 +1,36 @@
+input[type="range"] {
+	width: 31.25em;
+	height: 5px;
+	-webkit-appearance: none;
+	background: #e4e4e4;
+}
+
+input[type="range"]:focus {
+	outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border-radius: 50%;
+	width: 18px;
+	height: 18px;
+	border: 1px solid #a0a0a0;
+	background: #e4e4e4;
+}
+
+input::-moz-range-track {
+	background: transparent;
+	border: 0;
+}
+
+input[type="range"]::-ms-track {
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+
+input[type="range"]::-ms-thumb {
+	border-radius: 50%;
+	border: 2px solid #e4e4e4;
+	background: #e4e4e4;
+}

@@ -1,6 +1,9 @@
 # Virtual Environment
 venv/
 
+# WS281 Library
+client/rpi_ws281x/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

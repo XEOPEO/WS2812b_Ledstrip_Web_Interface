@@ -2,40 +2,182 @@
 {% block title %}Manage{% endblock %}
 {% block head %}
     {{ super() }}
+    <link href="{{ url_for('static', filename='css/bootstrap2-toggle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/jquery.minicolors.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/slider.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/manage.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/socket.io-1.4.5.js') }}"></script>
     <script>
+        function printSliderValue(val, target) {
+            var container = document.getElementById(target);
+            container.innerHTML = val;
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
-            function sendCommand() {
-                socket.emit("command", msg.value);
-                msg.value = "";
-            }
-            
-            var socket = io(),
-                sendButton = document.getElementsByTagName("section")[0].getElementsByTagName("button")[0],
-                msg = document.getElementById("m");
-            
-            sendButton.addEventListener("click", function() { sendCommand(); });
-            
-            msg.addEventListener("keydown", function(e) {
-                if (e.keyCode == 13) sendCommand();
+            printSliderValue(document.getElementById("sldrBrightness").value, "brightnessVal");
+            $("#hidden-input").minicolors({
+                control: $(this).attr('data-control') || 'hue',
+                defaultValue: $(this).attr('data-defaultValue') || '',
+                format: $(this).attr('data-format') || 'hex',
+                keywords: $(this).attr('data-keywords') || '',
+                inline: $(this).attr('data-inline') === 'true',
+                letterCase: $(this).attr('data-letterCase') || 'lowercase',
+                opacity: $(this).attr('data-opacity'),
+                position: $(this).attr('data-position') || 'bottom left',
+                swatches: $(this).attr('data-swatches') ? $(this).attr('data-swatches').split('|') : [],
+                hide: function() {
+                    console.log(this.value + ", " + this.id);
+                    sendCommand(this.id);
+                },
+                theme: 'bootstrap'
             });
 
-            socket.on("command", function(data) {
-                var messages = document.getElementById("messages"),
-                    li = document.createElement("li");
-                
-                li.appendChild(document.createTextNode(data));
-                messages.appendChild(li);
-            });
+            function getComponentFromHex(hex, component) {
+                if (component == 'r') {
+                    var r = parseInt(hex.substring(1,3), 16);
+                    return r;
+                } else if (component == 'g') {
+                    var g = parseInt(hex.substring(3,5), 16);
+                    return g;
+                } else if (component == 'b') {
+                    var b = parseInt(hex.substring(5,7), 16);
+                    return b;
+                }
+            }
+
+            function sendCommand(caller) {
+                if (caller == "hidden-input") {
+                    var hex = document.getElementById(caller).value
+                    var red = getComponentFromHex(hex, 'r');
+                    var green = getComponentFromHex(hex, 'g');
+                    var blue = getComponentFromHex(hex, 'b');
+                    var object = {
+                        index: 19,
+                        r: red,
+                        g: green,
+                        b: blue
+                    }
+
+                    console.log(object);
+                    socket.emit("command", JSON.stringify(object));
+                }
+
+                switch (caller) {
+                    case "btnCount":
+                        var object = {
+                            count: parseInt(document.getElementById("txtCountLEDs").value),
+                            brightness: parseInt(document.getElementById("sldrBrightness").value)
+                        };
+
+                        console.log(object);
+                        socket.emit("command", JSON.stringify(object));
+                        break;
+                    case "btnColorWipe":
+                        socket.emit("command", "colorWipe");
+                        break;
+                    case "btnTheaterChase":
+                        socket.emit("command", "theaterChase");
+                        break;
+                    case "btnRainbow":
+                        socket.emit("command", "rainbow");
+                        break;
+                    case "btnRainbowCycle":
+                        socket.emit("command", "rainbowCycle");
+                        break;
+                    case "btnTheaterChaseRainbow":
+                        socket.emit("command", "theaterChaseRainbow");
+                        break;
+                }
+            }
+
+            var socket = io("/strip"),
+                btnCount = document.getElementById("btnCount"),
+                btnColorWipe = document.getElementById("btnColorWipe"),
+                btnTheaterChase = document.getElementById("btnTheaterChase"),
+                btnRainbow = document.getElementById("btnRainbow"),
+                btnRainbowCycle = document.getElementById("btnRainbowCycle"),
+                btnTheaterChaseRainbow = document.getElementById("btnTheaterChaseRainbow");
+
+            btnCount.addEventListener("click", function(e) { sendCommand(e.target.id); });
+            btnColorWipe.addEventListener("click", function(e) { sendCommand(e.target.id); });
+            btnTheaterChase.addEventListener("click", function(e) { sendCommand(e.target.id); });
+            btnRainbow.addEventListener("click", function(e) { sendCommand(e.target.id); });
+            btnRainbowCycle.addEventListener("click", function(e) { sendCommand(e.target.id); });
+            btnTheaterChaseRainbow.addEventListener("click", function(e) { sendCommand(e.target.id); });
         }, false);
     </script>
 {% endblock %}
 {% block content %}
     <h1 class="page-header">{{ self.title() }}</h1>
     <article>
-        <ul id="messages"></ul>
         <section>
-            <input id="m" autocomplete="off"/><button>Send</button>
+            <p class="lead">Settings</p>
+            <form>
+                <div class="form-group">
+                    <label for="txtCountLEDs" class="control-label">Total LEDs</label>
+                    <input id="txtCountLEDs" type="text" class="form-control"/>
+                    <button id="btnCount" class="btn btn-default" type="button">Apply</button>
+                </div>
+                <div class="form-group">
+                    <label for="sldrBrightness" class="control-label">Brightness (<span id="brightnessVal"></span>)</label>
+                    <input id="sldrBrightness" type="range" min="0" max="255" step"1" onchange="printSliderValue(this.value, 'brightnessVal')"/>
+                </div>
+            </form>
+        </section>
+        <section>
+            <p class="lead">Animations</p>
+            <ul>
+                <li class="row">
+                    <span class="col-xs-9">Wipe color across strip a pixel at a time</span>
+                    <button id="btnColorWipe" class="btn btn-default" type="button">Try</button>
+                </li>
+                <li class="row">
+                    <span class="col-xs-9">Movie theater light style chaser animation</span>
+                    <button id="btnTheaterChase" class="btn btn-default" type="button">Try</button>
+                </li>
+                <li class="row">
+                    <span class="col-xs-9">Draw rainbow that fades across all pixels at once</span>
+                    <button id="btnRainbow" class="btn btn-default" type="button">Try</button>
+                </li>
+                <li class="row">
+                    <span class="col-xs-9">Draw rainbow that uniformly distributes itself across all pixels</span>
+                    <button id="btnRainbowCycle" class="btn btn-default" type="button">Try</button>
+                </li>
+                <li class="row">
+                    <span class="col-xs-9">Rainbow movie theater light style chaser animation</span>
+                    <button id="btnTheaterChaseRainbow" class="btn btn-default" type="button">Try</button>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <p class="lead">Advanced</p>
+            <ul>
+                <li class="row">
+                    <span class="col-xs-7">Change 1 LED</span>
+                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
+                    <button id="change1LED" class="btn btn-default" type="button"><span class="glyphicon glyphicon-cog"></span></button>
+                </li>
+                <li class="row">
+                    <div class="minicolors">
+                        <input type="hidden" id="hidden-input" class="minicolors-input" size="7" />
+                    </div>
+                </li>
+                <li class="row">
+                    <span class="col-xs-7">Define LED ranges</span>
+                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
+                    <button id="defRange" class="btn btn-default" type="button"><span class="glyphicon glyphicon-cog"></span></button>
+                </li>
+                <li class="row">
+                    <span class="col-xs-7">Create gradient effect</span>
+                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
+                    <button id="gradientFx" class="btn btn-default" type="button"><span class="glyphicon glyphicon-cog"></span></button>
+                </li>
+            </ul>
         </section>
     </article>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/bootstrap2-toggle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.minicolors.min.js') }}"></script>
 {% endblock %}
