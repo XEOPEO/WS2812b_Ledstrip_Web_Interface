@@ -2,7 +2,6 @@
 {% block title %}Manage{% endblock %}
 {% block head %}
     {{ super() }}
-    <link href="{{ url_for('static', filename='css/bootstrap2-toggle.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/jquery.minicolors.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/slider.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/manage.css') }}" rel="stylesheet">
@@ -10,88 +9,85 @@
     <script src="{{ url_for('static', filename='js/manage.js') }}"></script>
 {% endblock %}
 {% block content %}
-    <h1 class="page-header">{{ self.title() }}</h1>
-    <article>
-        <section>
-            <p class="lead">Settings</p>
-            <form>
-                <div class="form-group">
-                    <label for="txtCountLEDs" class="control-label" title="Amount of LED's on the strip">Total LEDs</label>
-                    <input id="txtCountLEDs" type="text" class="form-control"/>
+<h1 class="page-header">{{ self.title() }}</h1>
+<article>
+    <section>
+        <p class="lead">Settings</p>
+        <form>
+            <div class="form-group">
+                <label for="txtCountLEDs" class="control-label" title="Amount of LED's on the strip">Total LEDs</label>
+                <input id="txtCountLEDs" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="sldrBrightness" class="control-label">Brightness (<span id="brightnessVal"></span>)</label>
+                <input id="sldrBrightness" type="range" min="0" max="255" step "1" oninput="printSliderValue(this, 'brightnessVal')" />
+            </div>
+            <div class="form-group">
+                <button id="btnCreateStrip" class="btn btn-primary" type="button">Apply</button>
+                <button id="btnTurnOff" class="btn btn-default" type="button" title="Turning off all LED's">Turn Off</button>
+            </div>
+        </form>
+    </section>
+    <section>
+        <p class="lead">Animations</p>
+        <ul>
+            <li class="row">
+                <label class="col-xs-10">Wipe color across strip a pixel at a time</label>
+                <button id="btnColorWipe" class="btn btn-default" type="button">Try</button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Movie theater light style chaser animation</label>
+                <button id="btnTheaterChase" class="btn btn-default" type="button">Try</button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Draw rainbow that fades across all pixels at once</label>
+                <button id="btnRainbow" class="btn btn-default" type="button">Try</button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Draw rainbow that uniformly distributes itself across all pixels</label>
+                <button id="btnRainbowCycle" class="btn btn-default" type="button">Try</button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Rainbow movie theater light style chaser animation</label>
+                <button id="btnTheaterChaseRainbow" class="btn btn-default" type="button">Try</button>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <p class="lead">Advanced</p>
+        <ul>
+            <li class="row">
+                <label class="col-xs-10">Change strip color</label>
+                <div class="colorp-container">
+                    <input id="pickerColorStrip" type="hidden" class="colorp little-colorp" size="7" />
                 </div>
-                <div class="form-group">
-                    <label for="sldrBrightness" class="control-label">Brightness (<span id="brightnessVal"></span>)</label>
-                    <input id="sldrBrightness" type="range" min="0" max="255" step"1" oninput="printSliderValue(this, 'brightnessVal')" />
-                </div>
-                <div class="form-group">
-                    <button id="btnCreateStrip" class="btn btn-primary" type="button">Apply</button>
-                    <button id="btnTurnOff" class="btn btn-default" type="button" title="Turning off all LED's">Turn Off</button>
-                </div>
-            </form>
-        </section>
-        <section>
-            <p class="lead">Animations</p>
-            <ul>
-                <li class="row">
-                    <label class="col-xs-10">Wipe color across strip a pixel at a time</label>
-                    <button id="btnColorWipe" class="btn btn-default" type="button">Try</button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-10">Movie theater light style chaser animation</label>
-                    <button id="btnTheaterChase" class="btn btn-default" type="button">Try</button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-10">Draw rainbow that fades across all pixels at once</label>
-                    <button id="btnRainbow" class="btn btn-default" type="button">Try</button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-10">Draw rainbow that uniformly distributes itself across all pixels</label>
-                    <button id="btnRainbowCycle" class="btn btn-default" type="button">Try</button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-10">Rainbow movie theater light style chaser animation</label>
-                    <button id="btnTheaterChaseRainbow" class="btn btn-default" type="button">Try</button>
-                </li>
-            </ul>
-        </section>
-        <section>
-            <p class="lead">Advanced</p>
-            <ul>
-                <li class="row">
-                    <label class="col-xs-8">Change 1 LED</label>
-                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
-                    <button id="btnChange1LED" class="btn btn-default" data-toggle="modal" data-target="#modalChange1LED" type="button">
-                        <span class="glyphicon glyphicon-cog"></span>
-                    </button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-8">Define LED ranges</label>
-                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
-                    <button id="btnDefRange" class="btn btn-default" data-toggle="modal" data-target="#modalDefRange" type="button">
-                        <span class="glyphicon glyphicon-cog"></span>
-                    </button>
-                </li>
-                <li class="row">
-                    <label class="col-xs-8">Create gradient effect</label>
-                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="92" data-height="32"/>
-                    <button id="btnGradientFx" class="btn btn-default" data-toggle="modal" data-target="#modalGradientFx" type="button">
-                        <span class="glyphicon glyphicon-cog"></span>
-                    </button>
-                </li>
-                <li class="row">
-                    <div>
-                        <button id="btnApply" class="btn btn-default col-xs-3 col-xs-offset-4" type="button">Apply</button>
-                    </div>
-                </li>
-            </ul>
-        </section>
-        {% include "includes/_modals/change1LED.html" %}
-        {% include "includes/_modals/defRange.html" %}
-        {% include "includes/_modals/gradientFx.html" %}
-    </article>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Change 1 LED</label>
+                <button id="btnChange1LED" class="btn btn-default" data-toggle="modal" data-target="#modalChange1LED" type="button">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Define LED ranges</label>
+                <button id="btnDefRange" class="btn btn-default" data-toggle="modal" data-target="#modalDefRange" type="button">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
+            </li>
+            <li class="row">
+                <label class="col-xs-10">Create gradient effect</label>
+                <button id="btnGradientFx" class="btn btn-default" data-toggle="modal" data-target="#modalGradientFx" type="button">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
+            </li>
+        </ul>
+    </section>
+    {% include "includes/_modals/change1LED.html" %}
+    {% include "includes/_modals/defRange.html" %}
+    {% include "includes/_modals/gradientFx.html" %}
+</article>
 {% endblock %}
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/bootstrap2-toggle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.minicolors.min.js') }}"></script>
 {% endblock %}

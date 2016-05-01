@@ -20,6 +20,11 @@ class LedStrip:
         self._obj.setPixelColor(index, color)
         self._obj.show()
 
+    def setStripColor(self, color):
+        for i in range(self.numLEDs()):
+            self._obj.setPixelColor(i, color)
+            self._obj.show()
+
     def __init__(self, obj=None):
         self._obj = obj
 
@@ -153,6 +158,7 @@ class StripNamespace(BaseNamespace):
 
             if isinstance(data['count'], int) and isinstance(data['brightness'], int):
                 strip.setNeoPixel(Adafruit_NeoPixel(data['count'], 18, 800000, 5, 0, data['brightness']))
+                return
 
         if strip.getNeoPixel is not None:
             if 'index' in data and 'color' in data:
@@ -164,12 +170,21 @@ class StripNamespace(BaseNamespace):
                     b = data['color']['b']
 
                     strip.setColorPixel(data['index'], Color(g, r, b))
+                    return
 
             if 'startColor' in data and 'endColor' in data:
                 data = json.loads(data)
 
                 if DataParser.colorObjectValidator(data['startColor']) and DataParser.colorObjectValidator(data['endColor']):
                     strip.createGradient(data['startColor'], data['endColor'])
+                    return
+
+            if 'color' in data:
+                data = json.loads(data)
+
+                if DataParser.colorObjectValidator(data['color']):
+                    strip.setStripColor(Color(data['color']['g'], data['color']['r'], data['color']['b']))
+                    return
 
             data = str(data)
 

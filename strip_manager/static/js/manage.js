@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", function() {
         opacity: $(this).attr('data-opacity'),
         position: $(this).attr('data-position') || 'bottom left',
         swatches: $(this).attr('data-swatches') ? $(this).attr('data-swatches').split('|') : [],
-        /*hide: function() {
+        hide: function() {
             console.log(this.value + ", " + this.id);
-            sendCommand(this.id);
-        },*/
+            if (this.id == "pickerColorStrip") sendCommand(this.id);
+        },
         theme: 'bootstrap'
     });
 
@@ -97,6 +97,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 socket.emit("command", JSON.stringify({
                     "startColor": startColorObject,
                     "endColor": endColorObject
+                }));
+                break;
+            case "pickerColorStrip":
+                var hex = document.getElementById("pickerColorStrip").value,
+                    colorObject = getColorObject(hex);
+
+                socket.emit("command", JSON.stringify({
+                    "color": colorObject
                 }));
                 break;
         }

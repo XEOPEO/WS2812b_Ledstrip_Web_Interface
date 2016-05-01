@@ -1,4 +1,4 @@
-section div { padding-left: 20px; }
+section form div { padding-left: 20px; }
 section { margin-bottom: 40px; }
 
 ul {
@@ -7,3 +7,8 @@ ul {
 }
 
 #txtCountLEDs { width: 64px; }
+
+.colorp-container {
+    display: inline-block;
+    width: 40px;
+}
