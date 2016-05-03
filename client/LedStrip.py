@@ -25,6 +25,11 @@ class LedStrip:
             self._obj.setPixelColor(i, color)
             self._obj.show()
 
+    def setColorForRange(self, startIndex, endIndex, color):
+        for i in range(startIndex, endIndex + 1):
+            self._obj.setPixelColor(i, color)
+            self._obj.show()
+
     def __init__(self, obj=None):
         self._obj = obj
 
@@ -35,7 +40,8 @@ class LedStrip:
 
     def colorWipe(self, color=Color(255, 0, 0), wait_sec=.05):
         ''' Wipe color across strip a pixel at a time '''
-
+        self.turnOff()
+        
         for i in range(self.numLEDs()):
             self._obj.setPixelColor(i, color)
             self._obj.show()
@@ -59,10 +65,10 @@ class LedStrip:
         ''' Generate rainbow colors across 0-255 positions '''
 
         if pos < 85: return Color(pos * 3, 255 - pos * 3, 0)
-	elif pos < 170:
+        elif pos < 170:
             pos -= 85
             return Color(255 - pos * 3, 0, pos * 3)
-	else:
+        else:
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
 
@@ -124,8 +130,6 @@ class LedStrip:
         else:
             bStep = int((endColor['b'] - startColor['b']) / self.numLEDs()) + 1
 
-        print "%i, %i, %i" % (rStep, gStep, bStep)
-
         self._obj.setPixelColor(0, Color(startColor['g'], startColor['r'], startColor['b']))
 
         for i in range(1, self.numLEDs() - 1):
@@ -179,18 +183,35 @@ class StripNamespace(BaseNamespace):
                     strip.createGradient(data['startColor'], data['endColor'])
                     return
 
-            if 'color' in data:
+            if 'stripColor' in data:
+                data = json.loads(data)
+
+                if DataParser.colorObjectValidator(data['stripColor']):
+                    strip.setStripColor(Color(data['stripColor']['g'], data['stripColor']['r'], data['stripColor']['b']))
+                    return
+
+            if 'startIndex' in data and 'endIndex' in data and 'color' in data:
                 data = json.loads(data)
 
                 if DataParser.colorObjectValidator(data['color']):
-                    strip.setStripColor(Color(data['color']['g'], data['color']['r'], data['color']['b']))
+                    strip.setColorForRange(data['startIndex'], data['endIndex'],\
+                        Color(data['color']['g'], data['color']['r'], data['color']['b']))
                     return
+
+            if 'command' in data and 'color' in data:
+                data = json.loads(data)
+
+                if DataParser.colorObjectValidator(data['color']):
+                    if data['command'] == 'colorWipe':
+                        strip.colorWipe(Color(data['color']['g'], data['color']['r'], data['color']['b']))
+                        return
+                    elif data['command'] == 'theaterChase':
+                        strip.theaterChase(Color(data['color']['g'], data['color']['r'], data['color']['b']))
+                        return
 
             data = str(data)
 
             if data == 'turnOff': strip.turnOff()
-            elif data == 'colorWipe': strip.colorWipe()
-            elif data == 'theaterChase': strip.theaterChase()
             elif data == 'rainbow': strip.rainbow()
             elif data == 'rainbowCycle': strip.rainbowCycle()
             elif data == 'theaterChaseRainbow': strip.theaterChaseRainbow()

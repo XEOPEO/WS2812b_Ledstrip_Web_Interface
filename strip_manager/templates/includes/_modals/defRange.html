@@ -15,16 +15,19 @@
                         <label for="nmbrIndexLEDFrom">From</label>
                         <input id="nmbrIndexLEDFrom" class="form-control" type="number" min="0" max="0" value="0" step="1"/>
                         <label for="nmbrRange">Range</label>
-                        <input id="nmbrRange" class="form-control" type="text"/>
+                        <input id="nmbrRange" class="form-control" type="text" value="1" placeholder="0"/>
                         <label for="pickerColorRange">Color</label>
-                        <input id="pickerColorRange" type="text"/>
-                        <button id="btnAdd" class="btn btn-default" type="button">Add</button>
+                        <input id="pickerColorRange" class="colorp" value="#FF0000" type="hidden"/>
+                        <button id="btnAdd" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-plus"></span>Range
+                        </button>
                     </div>
                 </form>
+                <ul class="list-group ranges-group" id="ranges"></ul>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-warning" id="btnResetRanges">Reset</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>

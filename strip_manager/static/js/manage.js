@@ -24,6 +24,25 @@ function getColorObject(hex) {
     return object;
 }
 
+function createRange(startIndex, endIndex, hex) {
+    var li = document.createElement("li");
+    li.setAttribute("class", "list-group-item");
+
+    for (var i = startIndex; i <= endIndex; i++) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "range-item");
+        div.style.backgroundColor = hex;
+        li.appendChild(div);
+    }
+
+    document.getElementById("ranges").appendChild(li);
+}
+
+function resetRanges() {
+    document.getElementById("nmbrIndexLEDFrom").value = 0;
+    document.getElementById("ranges").innerHTML = "";
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     printSliderValue(document.getElementById("sldrBrightness"), "brightnessVal");
 
@@ -38,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function() {
         position: $(this).attr('data-position') || 'bottom left',
         swatches: $(this).attr('data-swatches') ? $(this).attr('data-swatches').split('|') : [],
         hide: function() {
-            console.log(this.value + ", " + this.id);
             if (this.id == "pickerColorStrip") sendCommand(this.id);
         },
         theme: 'bootstrap'
@@ -64,10 +82,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 socket.emit("command", "turnOff");
                 break;
             case "btnColorWipe":
-                socket.emit("command", "colorWipe");
+                var colorObject = getColorObject(document.getElementById("pickerColorStrip").value);
+
+                socket.emit("command", JSON.stringify({
+                    "command": "colorWipe",
+                    "color": colorObject
+                }));
                 break;
             case "btnTheaterChase":
-                socket.emit("command", "theaterChase");
+                var colorObject = getColorObject(document.getElementById("pickerColorStrip").value);
+
+                socket.emit("command", JSON.stringify({
+                    "command": "theaterChase",
+                    "color": colorObject
+                }));
                 break;
             case "btnRainbow":
                 socket.emit("command", "rainbow");
@@ -104,8 +132,27 @@ document.addEventListener("DOMContentLoaded", function() {
                     colorObject = getColorObject(hex);
 
                 socket.emit("command", JSON.stringify({
-                    "color": colorObject
+                    "stripColor": colorObject
                 }));
+                break;
+            case "btnAdd":
+                var startIndex = parseInt(document.getElementById("nmbrIndexLEDFrom").value),
+                    range = parseInt(document.getElementById("nmbrRange").value),
+                    endIndex = (startIndex + range) - 1,
+                    hex = document.getElementById("pickerColorRange").value,
+                    colorObject = getColorObject(hex);
+
+                if (parseInt(document.getElementById("nmbrIndexLEDFrom").getAttribute("max")) >= endIndex && range > 0) {
+                    createRange(startIndex, endIndex, hex);
+
+                    document.getElementById("nmbrIndexLEDFrom").value = (startIndex + range);
+
+                    socket.emit("command", JSON.stringify({
+                        "startIndex": startIndex,
+                        "endIndex": endIndex,
+                        "color": colorObject
+                    }));
+                }
                 break;
         }
     }
@@ -135,9 +182,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Modals - buttons
     var btnSetLED = document.getElementById("btnSetLED"),
-        btnCreateGradient = document.getElementById("btnCreateGradient");
-
+        btnCreateGradient = document.getElementById("btnCreateGradient"),
+        btnAdd = document.getElementById("btnAdd"),
+        btnResetRanges = document.getElementById("btnResetRanges");
 
     btnSetLED.addEventListener("click", function(e) { sendCommand(e.target.id); });
     btnCreateGradient.addEventListener("click", function(e) { sendCommand(e.target.id); });
+    btnAdd.addEventListener("click", function(e) { sendCommand(e.target.id); });
+    btnResetRanges.addEventListener("click", function() { resetRanges(); });
 }, false);

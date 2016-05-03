@@ -18,14 +18,13 @@ With the interface you must be able to change the color of the strip or individu
 - [x] Make the LED work and try some selfmade python scripts
 - [x] Prepare a Python webserver
 - [x] Get to know Python Flask Framework
-- [ ] Create the HTML-pages
-- [ ] Create the CSS-style
-- [ ] Create the JavaScript
+- [x] Create the HTML-pages
+- [x] Create the CSS-style
+- [x] Create the JavaScript
 - [x] Start coding the back-end pages/controller
 - [x] Create a link between web interface and the python scripts to command the LEDstrip
 
 ### Documentation
-- [ ] Make an essay about my experience in this project
-- [ ] Make a benchmark of the different libraries or technologies
+- [x] Make an essay about my experience in this project
+- [x] Make a benchmark of the different libraries or technologies
 - [ ] Make a time schedule
-- [ ] Program explanation with screenshots

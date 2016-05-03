@@ -1,14 +1,36 @@
-section form div { padding-left: 20px; }
-section { margin-bottom: 40px; }
+section form div {
+    padding-left: 20px;
+}
+
+section {
+    margin-bottom: 40px;
+}
 
 ul {
     list-style: none;
     margin-left: -20px;
 }
 
-#txtCountLEDs { width: 64px; }
+li.row, #btnAdd {
+    margin-top: 5px;
+}
+
+#txtCountLEDs {
+    width: 64px;
+}
 
 .colorp-container {
     display: inline-block;
     width: 40px;
+}
+
+ul.ranges-group {
+    margin-left: 0;
+}
+
+.range-item {
+    display: inline-block;
+    margin: 5px;
+    width: 28px;
+    height: 28px;
 }
